@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import  MySpinner  from '../components/MySpinner'
 
 import {
     Row,
@@ -27,6 +28,7 @@ import {
 
 export default function CandidatesPage() {
     const [candidates, setCandidates] = useState([]);
+    const [loading, setLoading] = useState(true)
     
     let user = useSelector(state => state.user) //bring user info
 
@@ -42,6 +44,7 @@ export default function CandidatesPage() {
           const data = await response.json();
           console.log({ data });
           setCandidates(data);
+          setLoading(false)
         };
         getCandidates();
       }, []);
@@ -59,6 +62,7 @@ export default function CandidatesPage() {
         }
       };
       console.log(candidates)
+    if (loading) return ( <div className="d-flex justify-content-center"><MySpinner/></div> )
     return (
         <Container className='fluid, my-3'>
         <Row >
