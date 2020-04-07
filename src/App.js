@@ -2,73 +2,51 @@ import React, { useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Switch, Redirect, Link } from "react-router-dom";
+import {useSelector} from 'react-redux'
+
 import Homepage from './pages/Homepage'
 import CreateCandidate from './pages/CreateCandidate'
 import CandidatesPage from './pages/CandidatesPage'
 import CandidatePage from "./pages/CandidatePage";
+import Login from './pages/Login'
 import FourOhFourPage from './components/FourOhFourPage'
 import NavBar from './components/Navbar'
-
+import LoginError from './pages/LoginError'
 
 function App() {
-  let [auth, setAuth] = useState(false)
 
-  function handleLogin() {
-    setAuth(true);
-  }
+  let user = useSelector(state => state.user) //bring user info
 
-  function AccessDenied() {
-    return (
-      <div className='container m-5'>
-        <h1>Uh oh! :(</h1>
-        <h6>You do not have access to make changes. Please login and try again.</h6>
-        <Link to="/candidates">
-          <button onClick = {()=>{handleLogin()}}type="button">
-            Login
-     </button>
-        </Link>
-      </div>
-    )
-  }
-
-  let ProtectedRoute = ({ component: Component, auth, ...rest }) => {
+  let ProtectedRoute = ({ component: Component, ...rest }) => {
     return (
       <Route {...rest} render={
         (props) => {
-          if (auth == true) {
+          if (user.authenticate == true) {
             return (
               <Component {...props} />
             )
           } else {
             return (
               <Redirect to={{ pathname: '/accessdenied' }} />
-            )
-          }
+            )}
         }} />
-    )
-  }
-
+    )}
 
   return (
     <div>
       <Router>
-        <NavBar auth={auth} setAuth={setAuth} />
+        <NavBar />
         <Switch>
-          <Route path='/createcandidate'>
-            <CreateCandidate />
-          </Route>
+          <Route path='/createcandidate' component = {CreateCandidate}/>
           <ProtectedRoute
-            auth={auth}
             path="/candidates/:id"
             exact component={CandidatePage} />
           <ProtectedRoute
-            auth={auth}
             path="/candidates"
             exact component={CandidatesPage} />
-          <Route path='/' exact >
-            <Homepage />
-          </Route>
-          <Route path="/accessdenied" component={AccessDenied} />
+          <Route path="/login" exact component={Login} />
+          <Route path='/' exact component={Homepage} />
+          <Route path="/accessdenied" component={LoginError} />
           <Route path="*" component={FourOhFourPage} />
         </Switch>
       </Router>
@@ -76,7 +54,5 @@ function App() {
   );
 
 }
-
-
 
 export default App;

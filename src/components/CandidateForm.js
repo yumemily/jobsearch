@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHsitory } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import { InputGroup, Row, Col, Form, Button, Container } from "react-bootstrap";
 
-export default function CandidateForm(props) {
+export default function CandidateForm() {
   const [validated, setValidated] = useState(false);
   const [candidate, setCandidate] = useState({
     city: "",
@@ -15,12 +15,18 @@ export default function CandidateForm(props) {
     first_name: ""
   });
   let history = useHistory();
+  const {id} = useParams();
 
   const getCandidate = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3001/candidates/${props.id}`
-      );
+      let url = `https://em-indeed-clone.herokuapp.com/candidates/${id}`
+      let config = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const response = await fetch(url, config)
       const data = await response.json();
       console.log('candid',data)
       setCandidate(data);
@@ -30,14 +36,11 @@ export default function CandidateForm(props) {
   };
 
   useEffect(() => {
-    if (props.candidate) {
-      setCandidate(props.candidate);
-    } else {
-      getCandidate();
-    }
-  }, [props.candidate]);
+    getCandidate();
+  }, []);
 
   const updateCandidate = async () => {
+    let url = `https://em-indeed-clone.herokuapp.com/candidates/${id}`
     const config = {
       method: "PUT",
       body: JSON.stringify(candidate),
@@ -47,7 +50,7 @@ export default function CandidateForm(props) {
     };
     try {
       const response = await fetch(
-        `http://localhost:3001/candidates/${candidate.id}`,
+        url,
         config
       );
     } catch (error) {

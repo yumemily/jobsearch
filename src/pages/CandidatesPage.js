@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import {
     Row,
@@ -27,9 +28,17 @@ import {
 export default function CandidatesPage() {
     const [candidates, setCandidates] = useState([]);
     
+    let user = useSelector(state => state.user) //bring user info
+
     useEffect(() => {
         const getCandidates = async () => {
-          const response = await fetch("http://localhost:3001/candidates");
+          const url = 'https://em-indeed-clone.herokuapp.com/candidates'
+          const response = await fetch(url,{
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
           const data = await response.json();
           console.log({ data });
           setCandidates(data);
@@ -37,17 +46,19 @@ export default function CandidatesPage() {
         getCandidates();
       }, []);
 
-      const onDeleteCandidate = id => {
+      const onDeleteCandidate = async(id) => {
         try {
-          const config = { method: "DELETE" };
-          fetch(`http://localhost:3001/candidates/${id}`, config);
+          const url = `https://em-indeed-clone.herokuapp.com/candidates/${id}`
+          const response = await fetch(url,{
+            method: 'DELETE',
+          });
           const newCandidates = candidates.filter(candidate => candidate.id !== id);
           setCandidates(newCandidates);
         } catch (error) {
           console.log("Error: ", error);
         }
       };
-
+      console.log(candidates)
     return (
         <Container className='fluid, my-3'>
         <Row >
@@ -83,12 +94,14 @@ export default function CandidatesPage() {
                     </ListGroupItem>
                   </ListGroup>
                   <Card.Body>
-                    <Card.Link onClick={() => onDeleteCandidate(candidate.id)}>
-                      <FontAwesomeIcon icon={faTrash} /> Remove
-                    </Card.Link>
+                    <div style={{display: user.email === 'bitna@coderschool.vn' || user.email === candidate.email ? 'block':'none'}}>
                     <Link to={`/candidates/${candidate.id}`}>
                       <FontAwesomeIcon icon={faEdit} /> Edit
                     </Link>
+                    <Card.Link onClick={() => onDeleteCandidate(candidate.id)}>
+                      <FontAwesomeIcon icon={faTrash} /> Remove
+                    </Card.Link>
+                    </div>
                   </Card.Body>
                 </Card>
               </Col>

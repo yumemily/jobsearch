@@ -14,10 +14,10 @@ export default function Homepage() {
             <Jumbotron style={{ backgroundColor: '#F7F7F7' }} fluid>
                 <Container >
                     <Row style={{ backgroundColor: '#F7F7F7' }}>
-                        <Col><h1 style={{ fontWeight: 'bolder' }}><FontAwesomeIcon icon={faSearch} /> Find your dream job</h1>
+                        <Col><h1 style={{ fontWeight: 'bolder' }}><FontAwesomeIcon icon={faSearch} /> Job Candidates</h1>
                             <p>
-                                This is a modified jumbotron that occupies the entire horizontal space of
-                                its parent.
+                                Login with bitna@coderschool.vn to access administrative control!
+                                Or log in with an existing email to edit that specific user's info!
                     </p>
                         </Col>
                         <Col>
